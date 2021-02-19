@@ -1,4 +1,4 @@
-#include "Memory/TKMemory.h"
+#include "TKMemory.h"
 
 namespace TK {
 	class MemManager{
