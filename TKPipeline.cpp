@@ -119,7 +119,7 @@ bool Pipeline::initPipeline(const VkDevice &device, const VkRenderPass &renderPa
 	std::array<VkPipelineShaderStageCreateInfo, 2> shaderStages{};
 	shaderStages[0].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
 	shaderStages[0].pName = "main";
-	shaderStages[0].module = Utility::loadSPIVShader("./shader/basic_vert.spv", device);
+	shaderStages[0].module = Utility::loadSPIVShader("../shader/basic_vert.spv", device);
 	shaderStages[0].stage = VK_SHADER_STAGE_VERTEX_BIT;
 
 	if(shaderStages[0].module == VK_NULL_HANDLE){
@@ -128,7 +128,7 @@ bool Pipeline::initPipeline(const VkDevice &device, const VkRenderPass &renderPa
 	
 	shaderStages[1].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
 	shaderStages[1].pName = "main";
-	shaderStages[1].module = Utility::loadSPIVShader("./shader/basic_frag.spv", device);
+	shaderStages[1].module = Utility::loadSPIVShader("../shader/basic_frag.spv", device);
 	shaderStages[1].stage = VK_SHADER_STAGE_FRAGMENT_BIT;
 	if(shaderStages[1].module == VK_NULL_HANDLE){
 		TKerror("invalid shader module!");
