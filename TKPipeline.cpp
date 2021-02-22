@@ -4,6 +4,7 @@
 
 #include "TKPipeline.h"
 #include "TKUtility.h"
+#include <vulkan/vulkan_core.h>
 
 using namespace TK;
 
@@ -27,7 +28,7 @@ bool Pipeline::initPipeline(const VkDevice &device, const VkRenderPass &renderPa
 
 	
 	VkPipelineInputAssemblyStateCreateInfo inputAssembleState = {};
-	inputAssembleState.sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO;
+	inputAssembleState.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
 	inputAssembleState.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
 
 	VkPipelineRasterizationStateCreateInfo rasterizationState = {};

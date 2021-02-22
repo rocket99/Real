@@ -1,0 +1,45 @@
+{
+    "name":"mtl0"
+    "inputAssembleState":{
+	"topology":"triangle_list"
+    }
+    "rasterizationState":{
+	"polygon":"fill",
+	"cull":"none",
+	"frontFace":"clockwise",
+	"depthClamp":false,
+	"depthBias":false,
+	"lineWidth":2.0
+    },
+    "colorBlendState":{
+	"blendAttachmentState":[
+	    {
+		"colorWriteMask":0xf,
+		"blendEnable":true,
+		"srcAlphaBlendFactor":"src_alpha",
+		"dstAlphaBlendFactor":"dst_alpha",
+		"alphaBlendOp":"add",
+		"srcColorBlendFactor":"src_color",
+		"dstColorBlendFactor":"dst_color",
+		"colorBlendOp":"add",
+		"colorWriteMask":[]
+	    }
+	],
+	"logicOp":"copy",
+	"blendConstants":[1.0,1.0,1.0,1.0]
+    },
+    "viewportState":{
+	"viewportCount":1,
+	"scissorCount":1
+    },
+    "dynamicState":["viewport", "scissor"],
+    "multiSampleState":{
+	"rasterizationSamples":1,
+	"psampleMask":"null" 
+    },
+    "depthStencilState":{
+
+    }
+    
+
+}

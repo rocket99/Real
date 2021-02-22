@@ -41,8 +41,18 @@ namespace Model{};
 
 typedef struct _vertex {
 	float position[3];
-	float color[3];
+	float normal[3];
+	float color[4];
+	float uv[2];
 } Vertex;
+
+typedef struct _light {
+	int mode;
+	float position[3];
+	float direction[3];
+	float diffuse[4];
+	float specular[4];
+} Light;
 
 #define TKlog(format, ...) printf("%s[%d]:" format "\n", __FILE__, __LINE__, ##__VA_ARGS__)
 #define TKwarn(format, ...) printf("warning:%s[%d]:" format "\n", __FILE__, __LINE__, ##__VA_ARGS__)
