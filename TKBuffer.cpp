@@ -4,7 +4,8 @@
 namespace TK{
 	Buffer::Buffer():
 		m_vkBuf(VK_NULL_HANDLE),
-		pDevice(nullptr){
+		pDevice(nullptr),
+		m_cpuMemPtr(nullptr){
 		m_createInfo = {};
 	}
 	
@@ -43,7 +44,7 @@ namespace TK{
 		allocInfo.allocationSize = memReq.size;
 		allocInfo.memoryTypeIndex =
 			pDevice->getMemoryTypeIndex(memReq.memoryTypeBits,
-										VK_MEMORY_PROPERTY_HOST_COHERENT_BIT |
+										VK_MEMORY_PROPERTY_HOST_COHERENT_BIT|
 										VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
 		
 		vkAllocateMemory(pDevice->logicalDevice(), &allocInfo, nullptr, &m_memory);
