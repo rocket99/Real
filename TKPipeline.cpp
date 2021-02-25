@@ -3,7 +3,10 @@
 //
 
 #include "TKPipeline.h"
+#include "TKPrefix.h"
 #include "TKUtility.h"
+#include <fstream>
+#include <rapidjson/document.h>
 #include <vulkan/vulkan_core.h>
 
 using namespace TK;
@@ -164,6 +167,57 @@ bool Pipeline::initPipeline(const VkDevice &device, const VkRenderPass &renderPa
 	
 	return true;
 }
+
+Pipeline *Pipeline::createWithJson(const VkDevice &device,
+                                   const VkRenderPass &renderPass,
+                                   const std::string &jsonFile) {
+	Pipeline *pl = new Pipeline();
+	if(pl->initWithJson(device, renderPass, jsonFile)==false){
+		delete pl;
+		return nullptr;
+	}
+	return pl;
+}
+
+bool Pipeline::initWithJson(const VkDevice &device,
+							const VkRenderPass &renderPass,
+							const std::string &jsonFile){
+	std::ifstream srcFile(jsonFile, std::ios::in);
+	if(!srcFile.is_open()){
+		TKerror("pipeline configure File not found! %s", jsonFile.c_str());
+		return false;
+	}
+	char buf[256];
+	std::string jsonStr = "";
+	while(!srcFile.eof()){
+		srcFile.getline(buf, 256);
+		jsonStr += buf;
+	}
+	rapidjson::Document doc;
+	doc.Parse(jsonStr.c_str());
+	std::string nameStr = doc["name"].GetString();
+	VkPipelineInputAssemblyStateCreateInfo inputAssembleState = {};
+	inputAssembleState.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
+	inputAssembleState.pNext = nullptr;
+	std::string topology = "";
+	if(doc["inputAssembleState"].IsObject()){
+		topology = doc["inputAssembleState"]["topology"].GetString();
+	}
+	inputAssembleState.topology = Configure::shared()->primTopologyMap()[topology];
+	inputAssembleState.primitiveRestartEnable =
+		doc["inputAssembleState"]["restartEnable"].GetBool() ? VK_TRUE : VK_FALSE;
+
+	VkPipelineRasterizationStateCreateInfo rasterState = {};
+	rasterState.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
+	rasterState.lineWidth = doc["rasterizationState"]["lineWidth"].GetFloat();
+	rasterState.depthBiasClamp = doc["rasteraztionState"]["depthBias"].GetBool() ? VK_TRUE : VK_FALSE;
+
+	if(doc.HasMember("raterizationState")){
+
+	}
+	return true;
+}
+
 
 void Pipeline::destroy(){
 	if(m_pipeline != VK_NULL_HANDLE){

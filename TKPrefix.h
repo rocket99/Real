@@ -34,6 +34,11 @@
 #include <vulkan/vk_layer.h>
 #include <vulkan/vk_icd.h>
 
+#include <rapidjson/reader.h>
+#include <rapidjson/rapidjson.h>
+#include <rapidjson/document.h>
+#include <rapidjson/writer.h>
+
 
 namespace TK {};
 

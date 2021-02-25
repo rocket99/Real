@@ -6,6 +6,7 @@
 #define __TKPipeline_h__
 
 #include "TKPrefix.h"
+#include <vulkan/vulkan_core.h>
 
 namespace TK {
 
@@ -15,6 +16,10 @@ namespace TK {
 		~Pipeline();
 		static Pipeline *create(const VkDevice &device, const VkRenderPass &renderPass);
 		bool initPipeline(const VkDevice &device, const VkRenderPass &renderPass);
+
+		static Pipeline *createWithJson(const VkDevice &device, const VkRenderPass &renderPass, const std::string &jsonFile);
+		bool initWithJson(const VkDevice &device, const VkRenderPass &renderPass, const std::string &jsonFile);
+
 		void destroy();
 		
 		VkPipeline pipeline() const;

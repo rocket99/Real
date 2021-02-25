@@ -4,8 +4,7 @@
 namespace TK{
 	Buffer::Buffer():
 		m_vkBuf(VK_NULL_HANDLE),
-		pDevice(nullptr),
-		m_cpuMemPtr(nullptr){
+		pDevice(nullptr){
 		m_createInfo = {};
 	}
 	

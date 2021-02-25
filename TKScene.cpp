@@ -204,10 +204,12 @@ void Scene::prepareVertices() {
 	void *data;
 	VkDevice device = pDevice->logicalDevice();
 	static Vertex vertexBufferData[] =
-	{{ { 0.5f,  0.5f, 0.0f},  {0.8f, 0.0f, 0.0f} },
-	 { {-0.5f,  0.5f, 0.0f},  {0.0f, 0.8f, 0.0f} },
-	 { {-0.5f, -0.5f, 0.0f},  {0.0f, 0.0f, 0.8f} },
-	 { { 0.5f, -0.5f, 0.0f},  {0.0f, 0.8f, 0.0f} }};
+		{
+		 {{ 0.5f,  0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}, {0.8f, 0.0f, 0.0f, 1.0f}, {0.0f, 0.0f}},
+		 {{-0.5f,  0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 0.8f, 0.0f, 1.0f}, {0.0f, 1.0f}},
+		 {{-0.5f, -0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 0.0f, 0.8f, 1.0f}, {1.0f, 1.0f}},
+		 {{ 0.5f, -0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 0.8f, 0.0f, 1.0f}, {1.0f, 0.0f}}
+		};
 	
 	uint32_t vertexBufferSize = sizeof(Vertex)*4;
 	static uint32_t indexBufferData[] = { 0, 1, 2, 0, 2, 3 };

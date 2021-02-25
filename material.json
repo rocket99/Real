@@ -1,45 +1,94 @@
 {
-    "name":"mtl0"
-    "inputAssembleState":{
-	"topology":"triangle_list"
-    }
-    "rasterizationState":{
-	"polygon":"fill",
-	"cull":"none",
-	"frontFace":"clockwise",
-	"depthClamp":false,
-	"depthBias":false,
-	"lineWidth":2.0
+    "vertexInputState": {
+        "bindingDesc": [
+            {
+                "inputRate": "input_rate_vertex",
+                "stride": 48,
+                "binding": 0
+            }
+        ],
+        "attributeDesc": [
+            {
+                "offset": 0,
+                "location": 0,
+                "format": "R32G32B32_SFLOAT",
+                "binding": 0
+            },
+            {
+                "offset": 24,
+                "location": 1,
+                "format": "R32G32B32_SFLOAT",
+                "binding": 0
+            }
+        ]
     },
-    "colorBlendState":{
-	"blendAttachmentState":[
-	    {
-		"colorWriteMask":0xf,
-		"blendEnable":true,
-		"srcAlphaBlendFactor":"src_alpha",
-		"dstAlphaBlendFactor":"dst_alpha",
-		"alphaBlendOp":"add",
-		"srcColorBlendFactor":"src_color",
-		"dstColorBlendFactor":"dst_color",
-		"colorBlendOp":"add",
-		"colorWriteMask":[]
-	    }
-	],
-	"logicOp":"copy",
-	"blendConstants":[1.0,1.0,1.0,1.0]
+    "shaderStage": [
+        {
+            "file": "../shader/basic_vert.spv",
+            "funcName": "main",
+            "stage": "stage_vertex"
+        },
+        {
+            "file": "../shader/basic_frag.spv",
+            "funcName": "main",
+            "stage": "stage_fragment"
+        }
+    ],
+    "depthStencilState": {
+        "depthTestEnable": true,
+        "depthWriteEnable": true,
+        "depthCompareOp": "less_equal",
+        "depthBoundsTestEnable": false,
+        "backFailOp": "keep",
+        "backPassOp": "keep",
+        "stencilTestEnable": false,
+        "frontFailOp": "keep",
+        "frontPassOp": "keep"
     },
-    "viewportState":{
-	"viewportCount":1,
-	"scissorCount":1
+    "multiSampleState": {
+        "psampleMask": "null",
+        "rasterizationSamples": 1
     },
-    "dynamicState":["viewport", "scissor"],
-    "multiSampleState":{
-	"rasterizationSamples":1,
-	"psampleMask":"null" 
+    "dynamicState": [
+        "viewport",
+        "scissor"
+    ],
+    "viewportState": {
+        "scissorCount": 1,
+        "viewportCount": 1
     },
-    "depthStencilState":{
-
-    }
-    
-
+    "colorBlendState": {
+        "blendConstants": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+        ],
+        "logicOp": "copy",
+        "blendAttachmentState": [
+            {
+                "colorBlendOp": "add",
+                "dstColorBlendFactor": "dst_color",
+                "srcColorBlendFactor": "src_color",
+                "alphaBlendOp": "add",
+                "dstAlphaBlendFactor": "dst_alpha",
+                "srcAlphaBlendFactor": "src_alpha",
+                "blendEnable": true,
+                "colorWriteMask": []
+            }
+        ]
+    },
+    "rasterizationState": {
+        "lineWidth": 2.0,
+        "depthBias": false,
+        "depthClamp": false,
+        "frontFace": "clockwise",
+        "cull": "none",
+        "polygon": "fill"
+    },
+    "inputAssembleState": {
+        "restartEnable": true,
+        "topology": "triangle_list"
+    },
+    "name": "mtl0"
 }

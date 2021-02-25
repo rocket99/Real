@@ -22,7 +22,6 @@ namespace TK{
 		VkBuffer m_vkBuf;
 		VkDeviceMemory m_memory;
 		VkBufferCreateInfo m_createInfo;
-		void *m_cpuMemPtr;
 	};
 
 };
