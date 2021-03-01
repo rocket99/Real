@@ -6,6 +6,7 @@
 #define __TKPipeline_h__
 
 #include "TKPrefix.h"
+#include <rapidjson/document.h>
 #include <vulkan/vulkan_core.h>
 
 namespace TK {
@@ -35,6 +36,30 @@ namespace TK {
 		VkDescriptorSetLayout m_descriptorSetLayout = VK_NULL_HANDLE;
 		VkPipelineLayout m_pipelineLayout = VK_NULL_HANDLE;
 		void setupPipelineLayout();
+
+
+		VkPipelineMultisampleStateCreateInfo m_mulSampleState;
+		void initMultiSampleCreateInfo(const rapidjson::Document &doc);
+
+		VkPipelineDepthStencilStateCreateInfo m_depthStencilState;
+		void initDepthStencilStateCreateInfo(const rapidjson::Document &doc);
+
+		VkPipelineDynamicStateCreateInfo m_dynamicState;
+		void initDynamicStateCreateInfo(const rapidjson::Document &doc);
+
+		VkPipelineInputAssemblyStateCreateInfo m_inputAssembleState;
+		void initInputAssembleStateCreateInfo(const rapidjson::Document &doc);
+
+		VkPipelineVertexInputStateCreateInfo m_vertexInputState;
+		void initVertexInputStateCreateInfo(const rapidjson::Document &doc);
+
+		VkPipelineShaderStageCreateInfo m_shaderStageState;
+		void initShaderStageCreateInfo(const rapidjson::Document &doc);
+
+		VkPipelineViewportStateCreateInfo m_viewportState;
+		void initViewportStateCreateInfo(const rapidjson::Document &doc);
+		
+		std::string m_name;
 	};
  
 }; // namespace TK

@@ -7,6 +7,7 @@
 #include "TKUtility.h"
 #include <fstream>
 #include <rapidjson/document.h>
+#include <rapidjson/memorystream.h>
 #include <vulkan/vulkan_core.h>
 
 using namespace TK;
@@ -196,6 +197,8 @@ bool Pipeline::initWithJson(const VkDevice &device,
 	rapidjson::Document doc;
 	doc.Parse(jsonStr.c_str());
 	std::string nameStr = doc["name"].GetString();
+	m_name = nameStr;
+	
 	VkPipelineInputAssemblyStateCreateInfo inputAssembleState = {};
 	inputAssembleState.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
 	inputAssembleState.pNext = nullptr;
@@ -209,13 +212,144 @@ bool Pipeline::initWithJson(const VkDevice &device,
 
 	VkPipelineRasterizationStateCreateInfo rasterState = {};
 	rasterState.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
-	rasterState.lineWidth = doc["rasterizationState"]["lineWidth"].GetFloat();
-	rasterState.depthBiasClamp = doc["rasteraztionState"]["depthBias"].GetBool() ? VK_TRUE : VK_FALSE;
-
+	rasterState.flags = 0;
+		
 	if(doc.HasMember("raterizationState")){
-
+		rapidjson::Value tmpDoc = doc["rasterizationState"].GetObject();
+		rasterState.lineWidth = tmpDoc["lineWidth"].GetFloat();
+		rasterState.depthBiasClamp = tmpDoc["depthClamp"].GetBool() ? VK_TRUE : VK_FALSE;
+		rasterState.depthBiasEnable = tmpDoc["depthBias"].GetBool() ? VK_TRUE : VK_FALSE;
+		rasterState.frontFace = std::string(tmpDoc["frontFace"].GetString())==std::string("clockwise") ?
+			VK_FRONT_FACE_CLOCKWISE : VK_FRONT_FACE_COUNTER_CLOCKWISE;
+		rasterState.polygonMode = std::string(tmpDoc["polygon"].GetString())=="fill" ?
+			VK_POLYGON_MODE_FILL : VK_POLYGON_MODE_LINE;
 	}
+
+	VkPipelineViewportStateCreateInfo vpState = {};
+	vpState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
+	vpState.pNext = nullptr;
+	vpState.flags = 0;
+	vpState.scissorCount = doc["viewportState"]["scissorCount"].GetInt();
+	vpState.scissorCount = doc["viewportState"]["viewportCount"].GetInt();
+	
+	this->initMultiSampleCreateInfo(doc);
+
+	
 	return true;
+	
+}
+
+
+void Pipeline::initMultiSampleCreateInfo(const rapidjson::Document &doc){
+	m_mulSampleState.sType =
+		VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
+	m_mulSampleState.pNext = nullptr;
+	if(doc.HasMember("multiSampleState")){
+		auto tmpDoc = doc["multiSampleState"].GetObject();
+		if(tmpDoc.HasMember("psampleMask")){
+			m_mulSampleState.pSampleMask = std::string(tmpDoc["pSampleMask"].GetString())=="null" ? nullptr : nullptr;
+		}
+		if(tmpDoc.HasMember("rasterizationSamples")){
+			int value = tmpDoc["rasterizationSamples"].GetInt();
+			switch(value){
+			case 1:
+				m_mulSampleState.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
+				break;
+			case 2:
+				m_mulSampleState.rasterizationSamples = VK_SAMPLE_COUNT_2_BIT;
+				break;
+			case 4:
+				m_mulSampleState.rasterizationSamples = VK_SAMPLE_COUNT_4_BIT;
+				break;
+			case 8:
+				m_mulSampleState.rasterizationSamples = VK_SAMPLE_COUNT_8_BIT;
+				break;
+			case 16:
+				m_mulSampleState.rasterizationSamples = VK_SAMPLE_COUNT_16_BIT;
+				break;
+			case 32:
+				m_mulSampleState.rasterizationSamples = VK_SAMPLE_COUNT_32_BIT;
+				break;				
+			case 64:
+				m_mulSampleState.rasterizationSamples = VK_SAMPLE_COUNT_64_BIT;
+				break;
+			default:
+				break;
+			}
+		}
+	}
+}
+
+void Pipeline::initDepthStencilStateCreateInfo(const rapidjson::Document &doc){
+	m_depthStencilState.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+	m_depthStencilState.pNext = nullptr;
+	if(!doc.HasMember("depthStencilState")){
+		return;
+	}
+	auto tmpDoc = doc["depthStencilState"].GetObject();
+	if(tmpDoc.HasMember("depthTestEnable")){
+		m_depthStencilState.depthTestEnable = tmpDoc["depthTestEnable"].GetBool() ? VK_TRUE : VK_FALSE;
+	}
+	if(tmpDoc.HasMember("depthWriteEnable")){
+		m_depthStencilState.depthWriteEnable = tmpDoc["depthWriteEnable"].GetBool() ? VK_TRUE : VK_FALSE;
+	}
+	if(tmpDoc.HasMember("depthCompareOp")){
+		std::string compareStr = tmpDoc["depthCompareOp"].GetString();
+		if(compareStr == "less_equal"){
+			m_depthStencilState.depthCompareOp = VK_COMPARE_OP_LESS_OR_EQUAL;
+		}
+		if(compareStr == "always"){
+			m_depthStencilState.depthCompareOp = VK_COMPARE_OP_ALWAYS;
+		}
+		if(compareStr == "greater_equal"){
+			m_depthStencilState.depthCompareOp = VK_COMPARE_OP_GREATER_OR_EQUAL;
+		}
+		if(compareStr == "less"){
+			m_depthStencilState.depthCompareOp = VK_COMPARE_OP_LESS;
+		}
+		if(compareStr == "greater"){
+			m_depthStencilState.depthCompareOp = VK_COMPARE_OP_GREATER;
+		}
+	}
+	if(tmpDoc.HasMember("depthBoundsTestEnable")){
+		m_depthStencilState.depthBoundsTestEnable = tmpDoc["depthBoundsTestEnable"].GetBool() ? VK_TRUE : VK_FALSE;
+	}
+	if(tmpDoc.HasMember("stencilTestEnable")){
+		m_depthStencilState.stencilTestEnable = tmpDoc["stencilTestEnable"].GetBool() ? VK_TRUE : VK_FALSE;
+	}
+	if(tmpDoc.HasMember("backFailOp")){
+		std::string str = tmpDoc["backFailOp"].GetString();
+		if(str == "keep"){
+			m_depthStencilState.back.failOp = VK_STENCIL_OP_KEEP;
+		}else if(str == "decrement_clamp"){
+			m_depthStencilState.back.failOp = VK_STENCIL_OP_DECREMENT_AND_CLAMP;
+		}
+	}
+	if(tmpDoc.HasMember("backPassOp")){
+		std::string str = tmpDoc["backPassOp"].GetString();
+		if(str == "keep"){
+			m_depthStencilState.back.passOp = VK_STENCIL_OP_KEEP;
+		}else if(str == "decrement_clamp"){
+			m_depthStencilState.back.passOp = VK_STENCIL_OP_DECREMENT_AND_CLAMP;
+		}
+	}
+	if(tmpDoc.HasMember("frontFailOp")){
+		std::string str = tmpDoc["frontFailOp"].GetString();
+		if(str == "keep"){
+			m_depthStencilState.front.failOp = VK_STENCIL_OP_KEEP;
+		}else if(str == "decrement_clamp"){
+			m_depthStencilState.front.failOp = VK_STENCIL_OP_DECREMENT_AND_CLAMP;
+		}
+	}
+	if(tmpDoc.HasMember("frontPassOp")){
+		std::string str = tmpDoc["frontPassOp"].GetString();
+		if(str == "keep"){
+			m_depthStencilState.front.passOp = VK_STENCIL_OP_KEEP;
+		}else if(str == "decrement_clamp"){
+			m_depthStencilState.front.passOp = VK_STENCIL_OP_DECREMENT_AND_CLAMP;
+		}
+	}
+	
 }
 
 
