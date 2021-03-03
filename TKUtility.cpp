@@ -34,11 +34,6 @@ namespace TK{
 		return VK_NULL_HANDLE;
 	}
 
-	VkPrimitiveTopology Utility::primitveTopology(const std::string &topologyStr){
-		return VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
-	}
-
-
 	static Configure *conf = nullptr;
 	Configure::Configure(){
 		m_primTopologyDict["triangle_list"] = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
@@ -51,7 +46,16 @@ namespace TK{
 		m_primTopologyDict["point_list"] = VK_PRIMITIVE_TOPOLOGY_POINT_LIST;
 		m_primTopologyDict["triangle_strip"] = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP;
 		m_primTopologyDict["triangle_trip_adjacency"] = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP_WITH_ADJACENCY;
+
+		m_polygonModeDict["fill"] = VK_POLYGON_MODE_FILL;
+		m_polygonModeDict["line"] = VK_POLYGON_MODE_LINE;
+		m_polygonModeDict["point"] = VK_POLYGON_MODE_POINT;
+		m_polygonModeDict["fill_rect_nv"] = VK_POLYGON_MODE_FILL_RECTANGLE_NV;
+
+		m_frontFaceDict["clock"] = VK_FRONT_FACE_CLOCKWISE;
+		m_frontFaceDict["count_clock"] = VK_FRONT_FACE_COUNTER_CLOCKWISE;
 	}
+	
 	Configure::~Configure(){}
 
 	Configure *Configure::shared(){
@@ -61,9 +65,53 @@ namespace TK{
 		return conf;
 	}
 
-	std::map<std::string, VkPrimitiveTopology> &Configure::primTopologyMap(){
-		return  m_primTopologyDict;
+	VkPrimitiveTopology Configure::primTopology(const std::string &key){
+		TKAssert(m_primTopologyDict.find("key") != m_primTopologyDict.end(),
+				 "Unsupported Primitive Topology %s", key.c_str());
+		return  m_primTopologyDict[key];
 	}
+
+	VkPolygonMode Configure::polygonMode(const std::string &key){
+		TKAssert(m_polygonModeDict.find(key) != m_polygonModeDict.end(),
+				 "Unsupported Polygon Mode %s", key.c_str());
+		return m_polygonModeDict[key];
+	}
+
+	VkFrontFace Configure::frontFace(const std::string &key){
+		TKAssert(m_frontFaceDict.find(key)!=m_frontFaceDict.end(),
+				 "Unsupported Front Face %s", key.c_str());
+		return m_frontFaceDict[key];
+	}
+
+	VkSampleCountFlagBits Configure::sampleCountFlagBit(int flag){
+		switch(flag){
+		case 1:
+			return VK_SAMPLE_COUNT_1_BIT;
+			break;
+		case 2:
+			return VK_SAMPLE_COUNT_2_BIT;
+			break;
+		case 4:
+			return VK_SAMPLE_COUNT_4_BIT;
+			break;
+		case 8:
+			return VK_SAMPLE_COUNT_8_BIT;
+			break;
+		case 16:
+			return VK_SAMPLE_COUNT_16_BIT;
+			break;
+		case 32:
+			return VK_SAMPLE_COUNT_32_BIT;
+			break;
+		case 64:
+			return VK_SAMPLE_COUNT_64_BIT;
+			break;
+		default:
+			break;
+		}
+		return VK_SAMPLE_COUNT_1_BIT;
+	}
+	
 };
 
 

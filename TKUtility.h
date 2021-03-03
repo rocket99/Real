@@ -21,9 +21,15 @@ namespace TK {
 		Configure();
 		~Configure();
 		static Configure *shared();
-		std::map<std::string, VkPrimitiveTopology> &primTopologyMap();
+		VkPrimitiveTopology primTopology(const std::string &key);
+		VkPolygonMode polygonMode(const std::string &key);
+		VkFrontFace frontFace(const std::string &key);
+		VkSampleCountFlagBits sampleCountFlagBit(int i);
 	private:
 		std::map<std::string, VkPrimitiveTopology> m_primTopologyDict;
+		std::map<std::string, VkPolygonMode> m_polygonModeDict;
+		std::map<std::string, VkFrontFace> m_frontFaceDict;
+		
 	};
 };
 

@@ -1,10 +1,29 @@
 #include "TKImageBuffer.h"
+#include <vulkan/vulkan_core.h>
 
 namespace TK {
-
-	ImageBuffer::ImageBuffer(){}
+	ImageBuffer::ImageBuffer():
+		m_device(VK_NULL_HANDLE),
+		m_image(VK_NULL_HANDLE),
+		m_imageMem(VK_NULL_HANDLE),
+		m_imageView(VK_NULL_HANDLE){}
+	
 	ImageBuffer::~ImageBuffer(){}
 
+	void ImageBuffer::destroy(){
+		if(m_imageView != VK_NULL_HANDLE){
+			vkDestroyImageView(m_device, m_imageView, nullptr);
+		}
+
+		if(m_imageMem != VK_NULL_HANDLE){
+			vkFreeMemory(m_device, m_imageMem, nullptr);
+		}
+		
+		if(m_image != VK_NULL_HANDLE){
+			vkDestroyImage(m_device, m_image, nullptr);
+		}
+	}
+	
 	ImageBuffer *ImageBuffer::createDepthImageBuffer(Device *device, uint32_t width, uint32_t height){
 		ImageBuffer *imgBuf = new ImageBuffer();
 		if(imgBuf->initDepthImageBuffer(device, width, height)==false){
@@ -31,17 +50,30 @@ namespace TK {
 		imageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
 		imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 		imageInfo.flags = 0;
-		vkCreateImage(m_device, &imageInfo, nullptr, &m_vkImage);
+		vkCreateImage(m_device, &imageInfo, nullptr, &m_image);
 
 		VkMemoryAllocateInfo memAllocInfo = {};
 		memAllocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
 		memAllocInfo.pNext = nullptr;
 		VkMemoryRequirements memReqs;
-		vkGetImageMemoryRequirements(m_device, m_vkImage, &memReqs);
+		vkGetImageMemoryRequirements(m_device, m_image, &memReqs);
 		memAllocInfo.allocationSize = memReqs.size;
-		memAllocInfo.memoryTypeIndex = 
-			pDevice->getMemoryTypeIndex(memReqs.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
-		
+		memAllocInfo.memoryTypeIndex = pDevice->getMemoryTypeIndex(memReqs.memoryTypeBits,
+																   VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+		vkAllocateMemory(m_device, &memAllocInfo, nullptr, &m_imageMem);
+		vkBindImageMemory(m_device, m_image, m_imageMem, 0);
+
+		VkImageViewCreateInfo imageViewInfo = {};
+		imageViewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+		imageViewInfo.pNext = nullptr;
+		imageViewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+		imageViewInfo.format = pDevice->depthFormat();
+		imageViewInfo.image = m_image;
+		imageViewInfo.subresourceRange.baseArrayLayer = 0;
+		imageViewInfo.subresourceRange.baseMipLevel = 0;
+		imageViewInfo.subresourceRange.layerCount = 1;
+		imageViewInfo.subresourceRange.levelCount = 1;
+		vkCreateImageView(m_device, &imageViewInfo, nullptr, &m_imageView);
 		return true;
 	}
 

@@ -29,7 +29,6 @@ bool Pipeline::initPipeline(const VkDevice &device, const VkRenderPass &renderPa
 	m_device = device;
 //	this->setupPipelineCache();
 	this->setupPipelineLayout();
-
 	
 	VkPipelineInputAssemblyStateCreateInfo inputAssembleState = {};
 	inputAssembleState.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
@@ -202,11 +201,12 @@ bool Pipeline::initWithJson(const VkDevice &device,
 	VkPipelineInputAssemblyStateCreateInfo inputAssembleState = {};
 	inputAssembleState.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
 	inputAssembleState.pNext = nullptr;
-	std::string topology = "";
+	
 	if(doc["inputAssembleState"].IsObject()){
-		topology = doc["inputAssembleState"]["topology"].GetString();
+		std::string topology = doc["inputAssembleState"]["topology"].GetString();
+		inputAssembleState.topology = Configure::shared()->primTopology(topology);
 	}
-	inputAssembleState.topology = Configure::shared()->primTopologyMap()[topology];
+
 	inputAssembleState.primitiveRestartEnable =
 		doc["inputAssembleState"]["restartEnable"].GetBool() ? VK_TRUE : VK_FALSE;
 
@@ -219,10 +219,8 @@ bool Pipeline::initWithJson(const VkDevice &device,
 		rasterState.lineWidth = tmpDoc["lineWidth"].GetFloat();
 		rasterState.depthBiasClamp = tmpDoc["depthClamp"].GetBool() ? VK_TRUE : VK_FALSE;
 		rasterState.depthBiasEnable = tmpDoc["depthBias"].GetBool() ? VK_TRUE : VK_FALSE;
-		rasterState.frontFace = std::string(tmpDoc["frontFace"].GetString())==std::string("clockwise") ?
-			VK_FRONT_FACE_CLOCKWISE : VK_FRONT_FACE_COUNTER_CLOCKWISE;
-		rasterState.polygonMode = std::string(tmpDoc["polygon"].GetString())=="fill" ?
-			VK_POLYGON_MODE_FILL : VK_POLYGON_MODE_LINE;
+		rasterState.frontFace = Configure::shared()->frontFace(tmpDoc["frontFace"].GetString());
+		rasterState.polygonMode = Configure::shared()->polygonMode(tmpDoc["polygon"].GetString());
 	}
 
 	VkPipelineViewportStateCreateInfo vpState = {};
@@ -247,36 +245,16 @@ void Pipeline::initMultiSampleCreateInfo(const rapidjson::Document &doc){
 	if(doc.HasMember("multiSampleState")){
 		auto tmpDoc = doc["multiSampleState"].GetObject();
 		if(tmpDoc.HasMember("psampleMask")){
-			m_mulSampleState.pSampleMask = std::string(tmpDoc["pSampleMask"].GetString())=="null" ? nullptr : nullptr;
+			m_mulSampleState.pSampleMask = std::string(tmpDoc["pSampleMask"].GetString())=="null" ?
+				nullptr : nullptr;
 		}
+		
 		if(tmpDoc.HasMember("rasterizationSamples")){
 			int value = tmpDoc["rasterizationSamples"].GetInt();
-			switch(value){
-			case 1:
-				m_mulSampleState.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
-				break;
-			case 2:
-				m_mulSampleState.rasterizationSamples = VK_SAMPLE_COUNT_2_BIT;
-				break;
-			case 4:
-				m_mulSampleState.rasterizationSamples = VK_SAMPLE_COUNT_4_BIT;
-				break;
-			case 8:
-				m_mulSampleState.rasterizationSamples = VK_SAMPLE_COUNT_8_BIT;
-				break;
-			case 16:
-				m_mulSampleState.rasterizationSamples = VK_SAMPLE_COUNT_16_BIT;
-				break;
-			case 32:
-				m_mulSampleState.rasterizationSamples = VK_SAMPLE_COUNT_32_BIT;
-				break;				
-			case 64:
-				m_mulSampleState.rasterizationSamples = VK_SAMPLE_COUNT_64_BIT;
-				break;
-			default:
-				break;
-			}
+			m_mulSampleState.rasterizationSamples = Configure::shared()->sampleCountFlagBit(value);
 		}
+
+		
 	}
 }
 
@@ -349,7 +327,6 @@ void Pipeline::initDepthStencilStateCreateInfo(const rapidjson::Document &doc){
 			m_depthStencilState.front.passOp = VK_STENCIL_OP_DECREMENT_AND_CLAMP;
 		}
 	}
-	
 }
 
 

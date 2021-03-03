@@ -62,5 +62,7 @@ typedef struct _light {
 #define TKlog(format, ...) printf("%s[%d]:" format "\n", __FILE__, __LINE__, ##__VA_ARGS__)
 #define TKwarn(format, ...) printf("warning:%s[%d]:" format "\n", __FILE__, __LINE__, ##__VA_ARGS__)
 #define TKerror(format, ...) printf("error:%s[%d]:" format "\n", __FILE__, __LINE__, ##__VA_ARGS__)
+#define TKAssert(v, format, ...)                                               \
+	printf("%s[%d]:" format "\n", __FILE__, __LINE__, ##__VA_ARGS__); assert(v)
 
 #endif // TKPrefix.h
