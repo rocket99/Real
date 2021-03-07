@@ -231,6 +231,7 @@ bool Pipeline::initWithJson(const VkDevice &device,
 	vpState.scissorCount = doc["viewportState"]["viewportCount"].GetInt();
 	
 	this->initMultiSampleCreateInfo(doc);
+	this->initDepthStencilStateCreateInfo(doc);
 
 	
 	return true;
@@ -328,6 +329,9 @@ void Pipeline::initDepthStencilStateCreateInfo(const rapidjson::Document &doc){
 		}
 	}
 }
+
+void Pipeline::initDynamicStateCreateInfo(const rapidjson::Document &doc) {}
+
 
 
 void Pipeline::destroy(){
