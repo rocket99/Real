@@ -13,10 +13,12 @@ namespace TK{
 	public:
 		ComputePipeline();
 		~ComputePipeline();
-		static ComputePipeline *create();
-		bool init();
+		static ComputePipeline *create(const VkDevice &device);
+		bool init(const VkDevice &device);
 	private:
+		VkDevice m_device;
 		VkPipeline m_pipeline;
+		VkComputePipelineCreateInfo m_info = {};
 	};
 };
 

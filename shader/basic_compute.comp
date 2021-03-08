@@ -1,0 +1,13 @@
+#version 420
+
+layout(local_size_x=16, local_size_y=16) in;
+
+layout(rgba32f, binding=0) uniform image2D out_image;
+
+shared vec4 mat_shared[16][16];
+
+void main(){
+	ivec2 pos = ivec2(gl_GlobalInvocationID.xy);
+	vec4 data = (pos.x/8)%2==0? vec4(1.0) : vec4(0.0);
+	imageStore(out_image, pos, data);
+}
