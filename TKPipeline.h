@@ -38,25 +38,25 @@ namespace TK {
 		void setupPipelineLayout();
 
 
-		VkPipelineMultisampleStateCreateInfo m_mulSampleState;
+		VkPipelineMultisampleStateCreateInfo m_mulSampleState = {};
 		void initMultiSampleCreateInfo(const rapidjson::Document &doc);
 
-		VkPipelineDepthStencilStateCreateInfo m_depthStencilState;
+		VkPipelineDepthStencilStateCreateInfo m_depthStencilState = {};
 		void initDepthStencilStateCreateInfo(const rapidjson::Document &doc);
 
-		VkPipelineDynamicStateCreateInfo m_dynamicState;
+		VkPipelineDynamicStateCreateInfo m_dynamicState = {};
 		void initDynamicStateCreateInfo(const rapidjson::Document &doc);
 
-		VkPipelineInputAssemblyStateCreateInfo m_inputAssembleState;
+		VkPipelineInputAssemblyStateCreateInfo m_inputAssembleState = {};
 		void initInputAssembleStateCreateInfo(const rapidjson::Document &doc);
 
-		VkPipelineVertexInputStateCreateInfo m_vertexInputState;
+		VkPipelineVertexInputStateCreateInfo m_vertexInputState = {};
 		void initVertexInputStateCreateInfo(const rapidjson::Document &doc);
 
-		VkPipelineShaderStageCreateInfo m_shaderStageState;
+		VkPipelineShaderStageCreateInfo m_shaderStageState = {};
 		void initShaderStageCreateInfo(const rapidjson::Document &doc);
 
-		VkPipelineViewportStateCreateInfo m_viewportState;
+		VkPipelineViewportStateCreateInfo m_viewportState = {};
 		void initViewportStateCreateInfo(const rapidjson::Document &doc);
 		
 		std::string m_name;
