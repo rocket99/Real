@@ -13,8 +13,8 @@ namespace TK{
 	public:
 		ComputePipeline();
 		~ComputePipeline();
-		static ComputePipeline *create(const VkDevice &device);
-		bool init(const VkDevice &device);
+		static ComputePipeline *create(const VkDevice &device, const std::string &shaderFile);
+		bool init(const VkDevice &device, const std::string &shaderFile);
 	private:
 		VkDevice m_device;
 		VkPipeline m_pipeline;
