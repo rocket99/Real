@@ -375,7 +375,8 @@ void Scene::buildCommandBuffers() {
 		//vkCmdBindDescriptorSets(m_drawCmdBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS,
 		//						pBasicPipeline->pipelineLayout(), 0, 1, &m_descriptorSet, 0, nullptr);
 		
-		vkCmdBindPipeline(m_drawCmdBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pBasicPipeline->pipeline());
+		vkCmdBindPipeline(m_drawCmdBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS,
+						  pBasicPipeline->pipeline());
 		VkDeviceSize offsets[1] = {0};
 
 		vkCmdBindVertexBuffers(m_drawCmdBuffers[i], 0, 1, &m_verticeBuf.buffer, offsets);
@@ -393,7 +394,9 @@ void Scene::draw() {
 	//this->buildCommandBuffers(m_currentIndex);
 	VkResult ret;
 	do{
-		ret = vkWaitForFences(pDevice->logicalDevice(), 1, &m_waitFences[m_currentIndex], VK_TRUE, UINT64_MAX);
+		ret = vkWaitForFences(pDevice->logicalDevice(), 1,
+							  &m_waitFences[m_currentIndex],
+							  VK_TRUE, UINT64_MAX);
 	}while(ret == VK_TIMEOUT);
   
 	vkResetFences(pDevice->logicalDevice(), 1, &m_waitFences[m_currentIndex]);

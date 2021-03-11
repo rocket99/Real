@@ -16,13 +16,10 @@ namespace TK{
 	}
 
 	bool ComputeTest::init(Device *device, const std::string &shaderFile){
-		pPipeline = ComputePipeline::create(device->logicalDevice(),
-											"../shader/basic_compute.spv");
+		pPipeline = ComputePipeline::create(device->logicalDevice(), "basic_compute.spv");
 		m_cmdPool = device->createCommandPool(device->computeQueueFamilyIndex());
 		m_cmdBuf = device->createCommandBuffer(m_cmdPool);
-
 		this->initDescriptorSet(device->logicalDevice());
-		
 		return true;
 	}
 
@@ -66,11 +63,8 @@ namespace TK{
 		descSetAllocInfo.descriptorPool = m_descPool;
 		descSetAllocInfo.descriptorSetCount = 1;
 		descSetAllocInfo.pSetLayouts = &m_descSetLayout;
-
 		
 		return true;
 	}
-
-	
 };
 

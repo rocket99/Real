@@ -2,7 +2,7 @@
 #include <fstream>
 #include <vulkan/vulkan_core.h>
 
-#define SHADER_DIR "/home/rock/Github/Real/shader"
+#cmakedefine SHADER_DIR "@SHADER_DIR@"
 namespace TK{
 	VkShaderModule Utility::loadSPIVShader(const char *file, const VkDevice &device){
 		std::string shaderFile = std::string(SHADER_DIR)+"/"+std::string(file);

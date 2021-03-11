@@ -132,7 +132,7 @@ bool Pipeline::initPipeline(const VkDevice &device, const VkRenderPass &renderPa
 	
 	shaderStages[1].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
 	shaderStages[1].pName = "main";
-	shaderStages[1].module = Utility::loadSPIVShader("../shader/basic_frag.spv", device);
+	shaderStages[1].module = Utility::loadSPIVShader("basic_frag.spv", device);
 	shaderStages[1].stage = VK_SHADER_STAGE_FRAGMENT_BIT;
 	if(shaderStages[1].module == VK_NULL_HANDLE){
 		TKError("invalid shader module!");

@@ -1,10 +1,15 @@
 #include "TKComputePipeline.h"
+#include "TKPrefix.h"
 #include "TKUtility.h"
 #include <vulkan/vulkan_core.h>
 
 namespace TK {
 	ComputePipeline::ComputePipeline():
-		m_pipeline(VK_NULL_HANDLE){}
+		m_pipeline(VK_NULL_HANDLE),
+		m_device(VK_NULL_HANDLE),
+		m_descPool(VK_NULL_HANDLE),
+		m_descSet(VK_NULL_HANDLE),
+		m_descSetLayout(VK_NULL_HANDLE){}
 	
 	ComputePipeline::~ComputePipeline(){}
 
@@ -38,6 +43,29 @@ namespace TK {
 		VkResult ret = vkCreateComputePipelines(m_device, VK_NULL_HANDLE, 1, &m_info, nullptr, &m_pipeline);
 		if(ret != VK_SUCCESS){
 			TKLog("create compute pipeline failed");
+			return false;
+		}
+		return true;
+	}
+
+	bool ComputePipeline::initDescriptorSetPool(){
+		std::vector<VkDescriptorPoolSize> poolSizeArr;
+		VkDescriptorPoolSize poolSize;
+		poolSize.descriptorCount = 1;
+		poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		poolSizeArr.push_back(poolSize);
+		
+		VkDescriptorPoolCreateInfo poolInfo = {};
+		poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+		poolInfo.pNext = nullptr;
+		poolInfo.flags = 0;
+		poolInfo.maxSets = 1;
+		poolInfo.poolSizeCount = static_cast<uint32_t>(poolSizeArr.size());
+		poolInfo.pPoolSizes = poolSizeArr.data();
+
+		VkResult ret = vkCreateDescriptorPool(m_device, &poolInfo, nullptr, &m_descPool);
+		if(ret != VK_SUCCESS){
+			TKError("create descriptor set pool failed! Err=%d", ret);
 			return false;
 		}
 		return true;

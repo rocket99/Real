@@ -4,7 +4,7 @@ project(Real)
 
 file(GLOB header "${CMAKE_SOURCE_DIR}/src/*.h")
 file(GLOB src    "${CMAKE_SOURCE_DIR}/src/*.cpp")
-file(GLOB test   "${CMAKE_SOURCE_DIR}/test/*.cpp")
+
 
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")

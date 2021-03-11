@@ -7,7 +7,6 @@
 #include "TKPrefix.h"
 #include <vulkan/vulkan_core.h>
 
-
 namespace TK {
 	class Utility{
 	public:
