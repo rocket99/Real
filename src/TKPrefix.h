@@ -65,4 +65,7 @@ typedef struct _light {
 #define TKAssert(v, format, ...)                                               \
 	printf("%s[%d]:" format "\n", __FILE__, __LINE__, ##__VA_ARGS__); assert(v)
 
+
+#define UINT32_T(v) static_cast<uint32_t>(v)
+#define UINT64_T(v) static_cast<uint64_t>(v)
 #endif // TKPrefix.h

@@ -8,8 +8,7 @@ namespace TK {
 		m_pipeline(VK_NULL_HANDLE),
 		m_device(VK_NULL_HANDLE),
 		m_descPool(VK_NULL_HANDLE),
-		m_descSet(VK_NULL_HANDLE),
-		m_descSetLayout(VK_NULL_HANDLE){}
+		m_descSet(VK_NULL_HANDLE){}
 	
 	ComputePipeline::~ComputePipeline(){}
 
@@ -32,7 +31,7 @@ namespace TK {
 		shaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
 		shaderStageInfo.pNext = nullptr;
 		shaderStageInfo.stage = VK_SHADER_STAGE_COMPUTE_BIT;
-		shaderStageInfo.module = Utility::loadSPIVShader("../shader/basic_compute.spv", m_device);
+		shaderStageInfo.module = Utility::loadSPIVShader(shaderFile.c_str(), m_device);
 		shaderStageInfo.pSpecializationInfo = nullptr;
 		shaderStageInfo.flags = 0;
 		shaderStageInfo.pName = "basic_compute";
@@ -40,7 +39,8 @@ namespace TK {
 		m_info.basePipelineHandle = VK_NULL_HANDLE;
 		m_info.basePipelineIndex = 0;
 
-		VkResult ret = vkCreateComputePipelines(m_device, VK_NULL_HANDLE, 1, &m_info, nullptr, &m_pipeline);
+		VkResult ret = vkCreateComputePipelines(m_device, VK_NULL_HANDLE, 1,
+												&m_info, nullptr, &m_pipeline);
 		if(ret != VK_SUCCESS){
 			TKLog("create compute pipeline failed");
 			return false;
@@ -70,4 +70,49 @@ namespace TK {
 		}
 		return true;
 	}
-}
+
+	bool ComputePipeline::initDescriptorSetLayout(){
+		std::vector<VkDescriptorSetLayoutBinding> bindingArr;
+		VkDescriptorSetLayoutBinding binding = {};
+		binding.binding = 0;
+		binding.descriptorCount = 1;
+		binding.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
+		binding.stageFlags = VK_SHADER_STAGE_COMPUTE_BIT;
+		binding.pImmutableSamplers = nullptr;
+		bindingArr.push_back(binding);
+		
+		VkDescriptorSetLayout layout = VK_NULL_HANDLE;
+		VkDescriptorSetLayoutCreateInfo layoutInfo = {};
+		layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+		layoutInfo.pNext = nullptr;
+		layoutInfo.flags = 0;
+		layoutInfo.bindingCount = UINT32_T(bindingArr.size());
+		layoutInfo.pBindings = bindingArr.data();
+		VkResult ret = vkCreateDescriptorSetLayout(m_device, &layoutInfo,
+												   nullptr, &layout);
+		if(ret != VK_SUCCESS){
+			TKError("create descriptor set layout failed! Err=%d\n", ret);
+			return false;
+		}
+		m_descSetLayoutArr.push_back(layout);
+		return true;
+	}
+
+	bool ComputePipeline::initDescriptorSet(){
+		VkDescriptorSetAllocateInfo allocInfo = {};
+		allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+		allocInfo.pNext = nullptr;
+		allocInfo.descriptorPool = m_descPool;
+		allocInfo.descriptorSetCount = UINT32_T(m_descSetLayoutArr.size());
+		allocInfo.pSetLayouts = m_descSetLayoutArr.data();
+		vkAllocateDescriptorSets(m_device, &allocInfo, &m_descSet);
+		return true;
+	}
+
+	void ComputePipeline::updateWriteDescSets(){
+
+	}
+} // namespace TK
+
+
+

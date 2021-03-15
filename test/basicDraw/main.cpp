@@ -1,5 +1,6 @@
-#include "../src/TKWindow.h"
-#include "../src/TKMemory.h"
+#include "TKScene.h"
+#include "TKWindow.h"
+#include "TKMemory.h"
 
 int main(int argc, char *argv[])
 {
@@ -15,6 +16,10 @@ int main(int argc, char *argv[])
 	if(window == nullptr){
 		TKLog("create window failed!\n");
 		return -1;
+	}
+	TK::Scene *pScene = TK::Scene::create(window->instance(), window->surface());
+	if(pScene != nullptr){
+		window->setScene(pScene);
 	}
 	window->startLoop();
 	window->destroy();

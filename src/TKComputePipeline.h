@@ -21,10 +21,14 @@ namespace TK{
 		VkComputePipelineCreateInfo m_info = {};
 
 		VkDescriptorPool m_descPool;
-		VkDescriptorSetLayout m_descSetLayout;
+		std::vector<VkDescriptorSetLayout> m_descSetLayoutArr;
 		VkDescriptorSet m_descSet;
-		bool initDesciptorSetPool();
-		
+		bool initDescriptorSetPool();
+
+		bool initDescriptorSetLayout();
+		bool initDescriptorSet();
+		void updateWriteDescSets();
+
 	};
 };
 

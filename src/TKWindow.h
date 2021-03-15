@@ -23,7 +23,9 @@ namespace TK {
 		const VkSurfaceKHR &surface() const;
 
 		const VkPhysicalDevice &device() const;
-	private:
+
+		void setScene(Scene *ps);
+	protected:
 		SDL_Window *pWindow;
 		SDL_Renderer *pRenderer;
 		SDL_Surface *pSurface;

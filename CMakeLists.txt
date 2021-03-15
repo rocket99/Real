@@ -5,6 +5,9 @@ project(Real)
 file(GLOB header "${CMAKE_SOURCE_DIR}/src/*.h")
 file(GLOB src    "${CMAKE_SOURCE_DIR}/src/*.cpp")
 
+set(SHADER_DIR ${CMAKE_SOURCE_DIR}/shader)
+configure_file(${CMAKE_SOURCE_DIR}/src/TKUtility.cpp.in
+  ${CMAKE_SOURCE_DIR}/src/TKUtility.cpp @ONLY)
 
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")

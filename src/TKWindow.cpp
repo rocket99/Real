@@ -10,6 +10,7 @@ Window::Window(){
 	pWindow = nullptr;
 	m_vkInst = VK_NULL_HANDLE;
 	m_surface = VK_NULL_HANDLE;
+	pScene = nullptr;
 }
 
 Window::~Window(){
@@ -38,24 +39,12 @@ bool Window::init(const std::string &name, uint32_t w, uint32_t h){
 		return false;
 	}
 	
-/*
-	pRenderer = SDL_CreateRenderer(pWindow, -1, SDL_RENDERER_ACCELERATED);
-	SDL_SetRenderDrawColor(pRenderer, 127, 127, 127, 255);
-	SDL_RenderClear(pRenderer);
-	SDL_RenderPresent(pRenderer);
-*/
-	
 	this->initVkInstanceSurface();
-	
-	pScene = Scene::create(m_vkInst, m_surface);
-	if(pScene == nullptr){
-		TKLog("create scene failed!\n");
-		return false;
-	}
-	pScene->setSize(w, h);
-	
+
 	return true;
 }
+
+void Window::setScene(Scene *ps) { pScene = ps; }
 
 void Window::startLoop(){
 	m_isRunning = true;
@@ -77,23 +66,9 @@ void Window::startLoop(){
 
 			break;
 		}
-
-		pScene->draw();
-
-/*
-		SDL_SetRenderDrawColor(pRenderer, 127, 200, 127, 100);
-		SDL_RenderClear(pRenderer);
-		
-		SDL_Rect rect;
-		rect.x = 0;
-		rect.y = 0;
-		rect.w = 200;
-		rect.h = 200;
-		SDL_SetRenderDrawColor(pRenderer, 255, 200, 127, 100);
-		SDL_RenderFillRect(pRenderer, &rect);
-		SDL_RenderPresent(pRenderer);
-*/
-		
+		if(pScene != nullptr){
+			pScene->draw();
+		}
 		SDL_Delay(1);
 	}
 }
@@ -107,8 +82,7 @@ void Window::handleWindowEvent(const SDL_WindowEvent &event){
 
 		break;
 	case SDL_WINDOWEVENT_RESIZED:
-		//SDL_RenderClear(pRenderer);
-		//SDL_RenderPresent(pRenderer);
+		
 		break;
 	case SDL_WINDOWEVENT_SIZE_CHANGED:
 	{
